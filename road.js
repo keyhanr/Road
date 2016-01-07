@@ -16,12 +16,14 @@ var paused = false;
 var l = []; // array of lights
 
 var d; // depth layers
+var dk; // darkness
 var s; // speed
 var p; // particles
 var maxL = 50; // max luminosity
 var minL = 40; //min luminosity
 var dChange;
 var animS = 45;
+var mR; // max radius
 
 var rY = 50; // range of gen on x
 var rX = 50; // range of gen on y
@@ -43,21 +45,12 @@ var amount = 0;
 //     cY = event.clientY - rect.top;
 // }
 
-function setOptions() {
-	d = document.getElementById('dS').value; // depth layers
-	s = document.getElementById('sS').value; // speed
-	p = document.getElementById('pS').value; // particles
-	maxL = 50; // max luminosity
-	minL = 20; //min luminosity
-	dChange = document.getElementById('dC').value;
-}
-
 function setD (nD) {
 	d = nD;
 }
 
 function setS (nS) {
-	s = nS;
+	s = nS/100;
 }
 
 function setP (nP) {
@@ -76,8 +69,18 @@ function setRY (nRY) {
 	rY = nRY;
 }
 
+function setDK (nDK) {
+	dk = nDK/100;
+}
+
 function setAS (nAS) {
-	animS = nAS;
+	pause();
+	animS = 252 - nAS;
+	pause();
+}
+
+function setMR (nMR) {
+	mR = nMR/10;
 }
 
 setD(document.getElementById('dS').value);
@@ -86,6 +89,8 @@ setP(document.getElementById('pS').value);
 setDC(document.getElementById('dC').value);
 setRX(document.getElementById('rXS').value);
 setRY(document.getElementById('rYS').value);
+setDK(document.getElementById('dkS').value);
+setMR(document.getElementById('mrS').value);
 
 function road() {
 	amount += 0.00;
@@ -101,7 +106,7 @@ function road() {
 		genLight();
 	}
 	for(var i = l.length - 1; i > 0; i--){
-		if (l[i][0] <= dChange) {
+		if (l[i][0] <= dChange || l[i][1] > width || l[i][2] > height) {
 			l.splice(i, 1);
 		}
 		else {
@@ -109,14 +114,14 @@ function road() {
 		    ctx.arc(
 		    	l[i][1], // x
 		    	l[i][2], // y
-		    	Math.max(1.7 - l[i][0]*1.4/d, 0.4), // r
-		    	0, 44/7);
+		    	mR - (l[i][0]*1.2)/d, // r
+		    	0, 6.2832);
 		    l[i][0] -= dChange;
 		    l[i][1] = (l[i][1] - cX)*s + cX; // x change
-		    l[i][2] = (l[i][2] - cY)*s + cY; // x change
-	    	ctx.strokeStyle = "hsl(" + Math.floor(l[i][0]*(360/d)) 
-	    		+ ", 40%, " + 50 + "%)";
-	    	ctx.stroke();
+		    l[i][2] = (l[i][2] - cY)*s + cY; // y change
+	    	ctx.fillStyle = "hsl(" + (l[i][0]/d)*360
+	    		+ ", 90%, " + (50 - 100*dk*(l[i][0]/d)) + "%)";
+	    	ctx.fill();
 		}
 	}
 }
