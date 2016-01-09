@@ -93,15 +93,7 @@ setDK(document.getElementById('dkS').value);
 setMR(document.getElementById('mrS').value);
 
 function road() {
-	amount += 0.00;
-    if (amount > 1) {
-        amount = 1;
-        clearInterval(interval);
-    }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.lineWidth=1;
-    ctx.fillStyle="#000";
-	ctx.fillRect(0,0,width, height);
 	for (var i = 0; i < p; i++) {
 		genLight();
 	}
